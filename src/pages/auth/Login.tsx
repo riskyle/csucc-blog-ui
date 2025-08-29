@@ -3,7 +3,6 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import { Link, useNavigate } from "react-router";
 
 const Login = () => {
-    const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
 

@@ -3,15 +3,7 @@ import { Link, useNavigate } from "react-router";
 import axios from "../api/axios";
 import customHelper from "../helper/custom-helper";
 import { useAuthContext } from "../contexts/AuthContext";
-
-interface BlogType {
-    id: number;
-    title: string;
-    content: string;
-    author: string;
-    created_at: string;
-    updated_at: string;
-}
+import type { BlogType } from "../ts-types";
 
 const Blog = () => {
     const [blogs, setBlogs] = React.useState<BlogType[]>([]);
@@ -37,16 +29,30 @@ const Blog = () => {
         fetchBlogs();
     }, []);
 
-    const showThisButtonIfAdmin = () => user.role === "admin" ? (
+    const deleteBlog = async (blogId: number) => {
+        if (!confirm("Are you sure you want to delete this blog? This action cannot be undone.")) {
+            return;
+        }
+
+        try {
+            await axios.delete(`/api/admin/blog/delete/${blogId}`);
+            setBlogs(blogs.filter(blog => blog.id !== blogId));
+            alert("Blog deleted successfully!");
+        } catch (err: any) {
+            console.error("Error deleting blog:", err);
+            alert("Failed to delete blog");
+        }
+    };
+
+    const showThisButtonIfAdmin = (id: any) => user.role === "admin" ? (
         <>
             <li>
-                <button type="button" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                    <svg className="text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M535.6 85.7C513.7 63.8 478.3 63.8 456.4 85.7L432 110.1L529.9 208L554.3 183.6C576.2 161.7 576.2 126.3 554.3 104.4L535.6 85.7zM236.4 305.7C230.3 311.8 225.6 319.3 222.9 327.6L193.3 416.4C190.4 425 192.7 434.5 199.1 441C205.5 447.5 215 449.7 223.7 446.8L312.5 417.2C320.7 414.5 328.2 409.8 334.4 403.7L496 241.9L398.1 144L236.4 305.7zM160 128C107 128 64 171 64 224L64 480C64 533 107 576 160 576L416 576C469 576 512 533 512 480L512 384C512 366.3 497.7 352 480 352C462.3 352 448 366.3 448 384L448 480C448 497.7 433.7 512 416 512L160 512C142.3 512 128 497.7 128 480L128 224C128 206.3 142.3 192 160 192L256 192C273.7 192 288 177.7 288 160C288 142.3 273.7 128 256 128L160 128z" /></svg>
+                <button onClick={() => navigate(`admin/edit/blog/${id}`)} type="button" className="text-gray-500 hover:text-gray-900 dark:hover:text-yellow-500">
                     Edit
                 </button>
             </li>
             <li>
-                <button type="button" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                <button onClick={() => deleteBlog(id)} type="button" className="text-gray-500 hover:text-gray-900 dark:hover:text-red-600">
                     Delete
                 </button>
             </li>
@@ -69,7 +75,7 @@ const Blog = () => {
                                     Read More
                                 </Link>
                             </li>
-                            {showThisButtonIfAdmin()}
+                            {showThisButtonIfAdmin(blog.id)}
                         </ul>
                     </div>
                 </div>

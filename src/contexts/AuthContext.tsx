@@ -16,6 +16,7 @@ export default function AuthProvider({ children }: any) {
     try {
       const res = await axios.get("/api/user");
       setUser(res.data);
+      localStorage.setItem("user", JSON.stringify(res.data));
     } catch {
       setUser(null);
     } finally {
@@ -33,6 +34,7 @@ export default function AuthProvider({ children }: any) {
       setLoggingIn(true);
     } catch (e: any) {
       if (e.response?.status === 422) {
+        alert()
         setErrors(e.response.data.errors);
       } else {
         throw e;
@@ -56,18 +58,34 @@ export default function AuthProvider({ children }: any) {
     }
   };
 
-  const logout = async () => {
+  const logout = async (navigate: any) => {
     try {
       await axios.post("/logout");
     } finally {
+      localStorage.removeItem("user");
       setUser(null);
       setLoggingIn(false);
+      navigate("/login");
     }
   };
 
+  const checkIfAuthenticated = (navigate: any) => {
+    if (!user) {
+      navigate("/login");
+    }
+  };
+
+  const checkIfAdmin = (navigate: any) => {
+    if (user.role !== "admin") {
+      navigate("/");
+    }
+  }
+
   useEffect(() => {
     getUser();
+    setUser(JSON.parse(localStorage.getItem("user") || "null"));
   }, []);
+
 
   return (
     <AuthContext.Provider
@@ -83,6 +101,8 @@ export default function AuthProvider({ children }: any) {
         register,
         logout,
         getUser,
+        checkIfAuthenticated,
+        checkIfAdmin,
       }}
     >
       {children}

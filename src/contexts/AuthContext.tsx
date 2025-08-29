@@ -1,73 +1,88 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import axios from "../api/axios";
 
 export const AuthContext = createContext<any>(null);
 
 export default function AuthProvider({ children }: any) {
+  const [user, setUser] = useState<any>(null);
   const [errors, setErrors] = useState([]);
   const [successMsg, setSuccessMsg] = useState("");
-  const [loggingIn, setLogginIn] = useState(false);
+  const [loggingIn, setLoggingIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const csrf = () => axios.get("/sanctum/csrf-cookie");
 
-  const login = async ({ ...data }) => {
-    await csrf();
+  const getUser = async () => {
+    try {
+      const res = await axios.get("/api/user");
+      setUser(res.data);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const login = async (data: any) => {
+    await csrf();
     setErrors([]);
 
-    axios
-      .post("/login", data)
-      .then((res) => {
-        let user = res.data.user;
-
-        localStorage.setItem("u_token", res.data.token);
-        setLogginIn(true);
-      })
-      .catch((e) => {
-        if (e.response.status !== 422) throw e;
+    try {
+      await axios.post("/login", data);
+      await getUser();
+      setLoggingIn(true);
+    } catch (e: any) {
+      if (e.response?.status === 422) {
         setErrors(e.response.data.errors);
-      })
+      } else {
+        throw e;
+      }
+    }
   };
 
-  const register = async ({ ...data }) => {
+  const register = async (data: any) => {
     await csrf();
-
     setErrors([]);
 
-    axios
-      .post("/register", data)
-      .then((res) => {
-        let user = res.data.user;
-        console.log(user);
-      })
-      .catch((e) => {
-        if (e.response.status !== 422) throw e;
+    try {
+      await axios.post("/register", data);
+      await getUser();
+    } catch (e: any) {
+      if (e.response?.status === 422) {
         setErrors(e.response.data.errors);
-      })
+      } else {
+        throw e;
+      }
+    }
   };
 
-  const logout = () => {
-    axios.post("/logout").catch((e) => {
-      if (e?.response?.status) throw e;
-    });
-
-    localStorage.removeItem("u_token");
+  const logout = async () => {
+    try {
+      await axios.post("/logout");
+    } finally {
+      setUser(null);
+      setLoggingIn(false);
+    }
   };
 
-  const token = localStorage.getItem("u_token");
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        loggingIn,
-        token,
+        user,
         errors,
         setErrors,
         successMsg,
         setSuccessMsg,
+        loggingIn,
+        loading,
         login,
-        logout,
         register,
+        logout,
+        getUser,
       }}
     >
       {children}
@@ -76,6 +91,5 @@ export default function AuthProvider({ children }: any) {
 }
 
 export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  return context;
+  return useContext(AuthContext);
 };

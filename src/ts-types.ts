@@ -3,6 +3,7 @@ export interface BlogType {
     title: string;
     content: string;
     author: string;
-    created_at: string;
-    updated_at: string;
+    isPublish: number;
+    createdAt: string;
+    updatedAt: string;
 }

@@ -38,7 +38,7 @@ const ReadBlog = () => {
                         <Link to="/">&larr; Back</Link>
                     </div>
                     <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-4">
-                        <span>{formatDate(blog?.created_at || "")}</span>
+                        <span>{formatDate(blog?.createdAt || "")}</span>
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">

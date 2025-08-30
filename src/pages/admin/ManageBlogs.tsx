@@ -2,21 +2,11 @@ import React from "react";
 import axios from "../../api/axios";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router";
+import type { BlogType } from "../../ts-types";
 import customHelper from "../../helper/custom-helper";
 
-interface Blog {
-    id: number;
-    title: string;
-    content: string;
-    isPublish: number;
-    user_id: number;
-    created_at: string;
-    updated_at: string;
-    author: string;
-}
-
 const ManageBlogs = () => {
-    const [blogs, setBlogs] = React.useState<Blog[]>([]);
+    const [blogs, setBlogs] = React.useState<BlogType[]>([]);
     const { checkIfAuthenticated, checkIfAdmin } = useAuthContext();
     const navigate = useNavigate();
 
@@ -96,7 +86,7 @@ const ManageBlogs = () => {
                     </td>
                     <td className="px-6 py-4">
                         <div className="text-gray-700 dark:text-gray-300">
-                            {blog.author || `User ${blog.user_id}`}
+                            {blog.author}
                         </div>
                     </td>
                     <td className="px-6 py-4">
@@ -108,7 +98,7 @@ const ManageBlogs = () => {
                         </span>
                     </td>
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
-                        {formatDate(blog.created_at)}
+                        {formatDate(blog.createdAt)}
                     </td>
                     <td className="px-6 py-4">
                         <div className="flex space-x-2">

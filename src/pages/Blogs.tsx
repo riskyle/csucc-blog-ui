@@ -67,7 +67,7 @@ const Blog = () => {
                         <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                             <a href="#">{blog.title}</a>
                         </h3>
-                        <span className="text-gray-500 dark:text-gray-400">{formatDate(blog.created_at)}</span>
+                        <span className="text-gray-500 dark:text-gray-400">{formatDate(blog.createdAt)}</span>
                         <p className="mt-3 mb-4 font-light text-gray-500 dark:text-gray-400">{truncateContent(blog.content, 500)}</p>
                         <ul className="flex space-x-4 sm:mt-0">
                             <li>

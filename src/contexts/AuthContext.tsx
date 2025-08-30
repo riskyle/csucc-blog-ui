@@ -5,23 +5,19 @@ export const AuthContext = React.createContext<any>(null);
 
 export default function AuthProvider({ children }: any) {
   const [user, setUser] = React.useState<any>(null);
-  const [errors, setErrors] = React.useState([]);
-  const [successMsg, setSuccessMsg] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   const csrf = () => axios.get("/sanctum/csrf-cookie");
 
   const login = async (data: any) => {
     await csrf();
-    setErrors([]);
-
     try {
       setLoading(true);
       await axios.post("/login", data);
       await getUser();
     } catch (e: any) {
       if (e.response?.status === 422) {
-        setErrors(e.response.data.errors);
+        alert("Invalid credentials.");
       } else {
         throw e;
       }
@@ -32,7 +28,6 @@ export default function AuthProvider({ children }: any) {
 
   const register = async (data: any) => {
     await csrf();
-    setErrors([]);
 
     try {
       setLoading(true);
@@ -40,7 +35,7 @@ export default function AuthProvider({ children }: any) {
       await getUser();
     } catch (e: any) {
       if (e.response?.status === 422) {
-        setErrors(e.response.data.errors);
+        alert(e.response.data.message);
       } else {
         throw e;
       }
@@ -90,10 +85,6 @@ export default function AuthProvider({ children }: any) {
     <AuthContext.Provider
       value={{
         user,
-        errors,
-        setErrors,
-        successMsg,
-        setSuccessMsg,
         loading,
         login,
         register,

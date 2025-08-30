@@ -27,9 +27,9 @@ const ManageBlogs = () => {
         try {
             const response = await axios.get("/api/admin/blogs");
             setBlogs(response.data.data || response.data);
-        } catch (err: any) {
-            console.error("Error fetching blogs:", err);
-            if (err.response?.status === 401) {
+        } catch (error: any) {
+            console.error("Error fetching blogs:", error);
+            if (error.response?.status === 401) {
                 navigate("/login");
             }
         }
@@ -56,8 +56,8 @@ const ManageBlogs = () => {
             ));
 
             alert(`Blog ${!currentStatus ? 'published' : 'unpublished'} successfully!`);
-        } catch (err: any) {
-            console.error("Error updating blog status:", err);
+        } catch (error: any) {
+            console.error("Error updating blog status:", error);
             alert("Failed to update blog status");
         }
     };
@@ -71,8 +71,8 @@ const ManageBlogs = () => {
             await axios.delete(`/api/admin/blog/delete/${blogId}`);
             setBlogs(blogs.filter(blog => blog.id !== blogId));
             alert("Blog deleted successfully!");
-        } catch (err: any) {
-            console.error("Error deleting blog:", err);
+        } catch (error: any) {
+            console.error("Error deleting blog:", error);
             alert("Failed to delete blog");
         }
     };

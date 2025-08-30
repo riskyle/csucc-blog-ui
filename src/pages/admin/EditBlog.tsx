@@ -22,7 +22,7 @@ const EditBlog = () => {
             setContent(response.data.content);
             setIsPublish(response.data.is_publish);
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
@@ -48,7 +48,7 @@ const EditBlog = () => {
 
             navigate("/admin/manage-blogs");
         } catch (error) {
-            console.log(error);
+            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -65,8 +65,8 @@ const EditBlog = () => {
             await axios.delete(`/api/blog/delete/${blogId}`);
             alert("Blog deleted successfully!");
             navigate("/admin/manage-blogs");
-        } catch (err: any) {
-            console.error("Error deleting blog:", err);
+        } catch (error: any) {
+            console.error("Error deleting blog:", error);
             alert("Failed to delete blog");
         }
     };

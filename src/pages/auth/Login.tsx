@@ -12,6 +12,7 @@ const Login = () => {
 
     const handleLoginSubmit = (e: any) => {
         e.preventDefault();
+
         login({ email, password });
     };
 

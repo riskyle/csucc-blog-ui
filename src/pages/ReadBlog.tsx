@@ -12,9 +12,8 @@ const ReadBlog = () => {
 
     const params = useParams();
 
-    const { user, checkIfAuthenticated } = useAuthContext();
+    const { checkIfAuthenticated } = useAuthContext();
 
-    const truncateContent = customHelper.truncateContent;
     const formatDate = customHelper.formatDate;
 
     const fetchBlogs = async () => {

@@ -62,7 +62,7 @@ const EditBlog = () => {
         }
 
         try {
-            await axios.delete(`/api/blog/delete/${blogId}`);
+            await axios.delete(`/api/admin/blog/delete/${blogId}`);
             alert("Blog deleted successfully!");
             navigate("/admin/manage-blogs");
         } catch (error: any) {
